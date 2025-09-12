@@ -4,10 +4,12 @@ import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-
 
 export async function GET(req: NextRequest) {
   try {
+    // Call the flow directly
     const result = await generateInitialAdminUserFlow({
       prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
     });
 
+    // Return the actual Firebase UID and email
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
       user: {
@@ -18,7 +20,10 @@ export async function GET(req: NextRequest) {
   } catch (error: any) {
     console.error('Error in admin setup:', error.message);
 
-    if (error.message.includes('already exists') || error.message.includes('auth/email-already-exists')) {
+    if (
+      error.message.includes('already exists') ||
+      error.message.includes('auth/email-already-exists')
+    ) {
       return NextResponse.json({ message: 'Admin user already exists.' }, { status: 200 });
     }
 
@@ -28,4 +33,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
