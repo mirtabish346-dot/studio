@@ -16,7 +16,7 @@ export default function LoginPage() {
               <h1 className="text-3xl font-bold font-headline">OmniServe</h1>
             </div>
             <p className="text-balance text-muted-foreground">
-              Login to access all our services in one place
+              Your favorite food, delivered.
             </p>
           </div>
           <LoginForm />

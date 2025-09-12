@@ -7,6 +7,7 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  Utensils,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -69,8 +70,8 @@ export default function AdminLayout({
                 href="/admin/providers"
                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
               >
-                <Package className="h-4 w-4" />
-                Service Providers{" "}
+                <Utensils className="h-4 w-4" />
+                Restaurants
               </Link>
               <Link
                 href="/admin/users"
@@ -126,8 +127,8 @@ export default function AdminLayout({
                   href="/admin/providers"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Package className="h-5 w-5" />
-                  Service Providers
+                  <Utensils className="h-5 w-5" />
+                  Restaurants
                 </Link>
                 <Link
                   href="/admin/users"

@@ -21,16 +21,16 @@ import {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Manage Service Providers</CardTitle>
-          <CardDescription>Approve or deny new service providers.</CardDescription>
+          <CardTitle>Manage Restaurants</CardTitle>
+          <CardDescription>Approve or deny new restaurant partners.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Provider ID</TableHead>
+                <TableHead>Restaurant ID</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>Cuisine</TableHead>
                 <TableHead>Joined</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>

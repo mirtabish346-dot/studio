@@ -6,7 +6,7 @@ import { CartProvider } from "@/context/cart-context";
 export const metadata: Metadata = {
   title: "OmniServe",
   description:
-    "Unified service platform for food, grocery, medicine, and more.",
+    "Your favorite food, delivered.",
 };
 
 export default function RootLayout({

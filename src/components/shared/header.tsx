@@ -16,13 +16,13 @@ export function Header() {
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <Icons.logo className="h-6 w-6 text-primary" />
-          <span className="sr-only">OmniServe</span>
+          <span className="">OmniServe</span>
         </Link>
         <Link
-          href="/dashboard"
+          href="/dashboard/food-delivery"
           className="text-foreground transition-colors hover:text-foreground"
         >
-          Dashboard
+          Restaurants
         </Link>
       </nav>
       <Sheet>
@@ -41,8 +41,8 @@ export function Header() {
               <Icons.logo className="h-6 w-6 text-primary" />
               <span className="sr-only">OmniServe</span>
             </Link>
-            <Link href="/dashboard" className="hover:text-foreground">
-              Dashboard
+            <Link href="/dashboard/food-delivery" className="hover:text-foreground">
+              Restaurants
             </Link>
           </nav>
         </SheetContent>
@@ -56,7 +56,7 @@ export function Header() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search services..."
+            placeholder="Search restaurants..."
             className="pl-10"
           />
         </div>
