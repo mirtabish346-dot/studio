@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,6 +33,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { auth, db } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 const baseFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -48,18 +50,13 @@ const baseFormSchema = z.object({
 
 const providerDetailsSchema = z.object({
     partnerType: z.enum(["restaurant", "pharmacy", "rider", "grocery"], { required_error: "Please select a partner type."}),
-    // Restaurant
     restaurantName: z.string().optional(),
     gstNumber: z.string().optional(),
-    // Pharmacy
     pharmacyName: z.string().optional(),
     medicalLicense: z.string().optional(),
-    // Rider
     vehicleType: z.string().optional(),
     licenseNumber: z.string().optional(),
-    // Grocery
     shopName: z.string().optional(),
-    // Common
     phoneNumber: z.string().min(1, "Phone number is required"),
     address: z.string().min(1, "Address is required"),
 }).refine(data => {
@@ -87,6 +84,7 @@ export function SignupForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<"initial" | "providerDetails" | "pendingMessage">("initial");
+  const [userUid, setUserUid] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof baseFormSchema>>({
     resolver: zodResolver(baseFormSchema),
@@ -114,31 +112,62 @@ export function SignupForm() {
     }
   });
 
-  function onInitialSubmit(values: z.infer<typeof baseFormSchema>) {
+  async function onInitialSubmit(values: z.infer<typeof baseFormSchema>) {
     setIsLoading(true);
-    // Simulate API call to create user
-    setTimeout(() => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userData = {
+        name: values.name,
+        email: values.email,
+        role: values.role,
+        createdAt: serverTimestamp(),
+      };
+
       if (values.role === "provider") {
+        await setDoc(userDocRef, { ...userData, status: "pending" });
+        setUserUid(user.uid);
         setStep("providerDetails");
       } else {
+        await setDoc(userDocRef, userData);
         toast({
           title: "Account Created!",
           description: "Welcome to OmniServe!",
         });
         router.push("/dashboard");
       }
-      setIsLoading(false);
-    }, 1000);
+    } catch (error: any) {
+        toast({
+            title: "Signup Failed",
+            description: error.message || "An unexpected error occurred.",
+            variant: "destructive"
+        });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
-  function onProviderDetailsSubmit(values: z.infer<typeof providerDetailsSchema>) {
+  async function onProviderDetailsSubmit(values: z.infer<typeof providerDetailsSchema>) {
+    if (!userUid) {
+        toast({ title: "Error", description: "User session not found.", variant: "destructive"});
+        return;
+    }
     setIsLoading(true);
-    // Simulate API call to save provider details
-    setTimeout(() => {
-        console.log("Provider Details:", values);
+    try {
+        const userDocRef = doc(db, "users", userUid);
+        await updateDoc(userDocRef, values);
         setStep("pendingMessage");
+    } catch (error: any) {
+         toast({
+            title: "Submission Failed",
+            description: error.message || "Could not save provider details.",
+            variant: "destructive"
+        });
+    } finally {
         setIsLoading(false);
-    }, 1000);
+    }
   }
 
   if (step === "pendingMessage") {
