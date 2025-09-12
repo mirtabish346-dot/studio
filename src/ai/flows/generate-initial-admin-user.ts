@@ -13,11 +13,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import * as admin from 'firebase-admin';
 
-// Initialize Firebase Admin SDK if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp();
-}
-
+// Firebase Admin SDK is initialized in @/ai/genkit.ts
 
 const GenerateInitialAdminUserInputSchema = z.object({
   prompt: z
