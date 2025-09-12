@@ -1,5 +1,8 @@
 import { RestaurantCard } from "@/components/dashboard/restaurant-card";
+import { Input } from "@/components/ui/input";
 import { restaurants } from "@/lib/data";
+import { MapPin, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function FoodDeliveryPage() {
   return (
@@ -11,6 +14,20 @@ export default function FoodDeliveryPage() {
         <p className="text-muted-foreground">
           Choose from a wide variety of cuisines.
         </p>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button variant="outline" className="shrink-0">
+          <MapPin className="h-5 w-5" />
+          <span className="hidden md:inline ml-2">Anytown, USA</span>
+        </Button>
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search restaurants or food..."
+            className="pl-10"
+          />
+        </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {restaurants.map((restaurant) => (
