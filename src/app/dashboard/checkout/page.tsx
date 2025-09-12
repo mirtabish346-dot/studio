@@ -61,8 +61,8 @@ export default function CheckoutPage() {
                 <Input id="city" defaultValue="Anytown" />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="zip">Zip Code</Label>
-                <Input id="zip" defaultValue="12345" />
+                <Label htmlFor="pincode">Pincode</Label>
+                <Input id="pincode" defaultValue="12345" />
               </div>
             </div>
           </CardContent>
