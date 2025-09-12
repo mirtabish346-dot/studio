@@ -68,6 +68,18 @@ export default function CheckoutPage() {
           </CardContent>
         </Card>
         <Card>
+            <CardContent className="p-0">
+                <Image 
+                    src="https://picsum.photos/seed/map/800/400"
+                    alt="Map Preview"
+                    width={800}
+                    height={400}
+                    className="w-full h-auto rounded-lg"
+                    data-ai-hint="street map"
+                />
+            </CardContent>
+        </Card>
+        <Card>
           <CardHeader>
             <CardTitle>Payment Method</CardTitle>
           </CardHeader>
