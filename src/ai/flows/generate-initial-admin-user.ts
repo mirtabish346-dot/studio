@@ -110,13 +110,13 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
 
 // --- Plain function to return real Firebase UID/email ---
 export async function createInitialAdminUser(): Promise<{ uid: string; email: string }> {
-  const flowResult = await generateInitialAdminUserFlow({
+  const user = await generateInitialAdminUserFlow({
     prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
   });
 
-  // Access .output to get the real user object
+  // Return actual values
   return {
-    uid: flowResult.output.uid,
-    email: flowResult.output.email!,
+    uid: user.uid,
+    email: user.email,
   };
 }
