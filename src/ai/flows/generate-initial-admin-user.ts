@@ -5,6 +5,7 @@
  * @fileOverview An AI agent for generating and creating the first admin user.
  *
  * - generateInitialAdminUser - A function that creates the initial admin user in Firebase.
+ * - generateInitialAdminUserFlow - The Genkit flow object for creating the user.
  * - GenerateInitialAdminUserInput - The input type for the generateInitialAdminUser function.
  * - GenerateInitialAdminUserOutput - The return type for the generateInitialAdminUser function.
  */
@@ -62,7 +63,7 @@ const prompt = ai.definePrompt({
 
   Prompt: {{{prompt}}}
 
-  Please provide the output in a JSON format that adheres to the specified schema, an'd ensuring all fields are populated with appropriate and secure values. The roles should include 'admin'.`,
+  Please provide the output in a JSON format that adheres to the specified schema, and ensuring all fields are populated with appropriate and secure values. The roles should include 'admin'.`,
 });
 
 export const generateInitialAdminUserFlow = ai.defineFlow(
