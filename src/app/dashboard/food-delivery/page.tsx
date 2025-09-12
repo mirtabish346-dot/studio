@@ -58,6 +58,8 @@ export default function FoodDeliveryPage() {
           >
             Food Items
           </Button>
+          <Button variant="outline">Best Prices</Button>
+          <Button variant="outline">Food of the day</Button>
         </div>
       </div>
       {view === "restaurants" ? (
