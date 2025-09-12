@@ -33,7 +33,7 @@ export default function CheckoutPage() {
   const grandTotal = total + tax + deliveryFee - discount;
 
   const handleApplyCoupon = () => {
-    if (couponCode.toUpperCase() === "SAVE10") {
+    if (couponCode.toUpperCase() === "OWAISDONKEY") {
       const newDiscount = total * 0.1;
       setDiscount(newDiscount);
       toast({
@@ -223,7 +223,7 @@ export default function CheckoutPage() {
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-green-600">
-                <p>Discount (SAVE10)</p>
+                <p>Discount (OWAISDONKEY)</p>
                 <p>-${discount.toFixed(2)}</p>
               </div>
             )}
