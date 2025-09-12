@@ -58,10 +58,10 @@ export default function ProfilePage() {
             {userProfile.addresses.map(address => (
                 <div key={address.id} className="flex items-center justify-between rounded-lg border p-4">
                     <div className="grid gap-1">
-                        <p className="font-semibold flex items-center gap-2">
+                        <div className="font-semibold flex items-center gap-2">
                             {address.type}
                             {address.isDefault && <Badge variant="secondary">Default</Badge>}
-                        </p>
+                        </div>
                         <p className="text-sm text-muted-foreground">{address.line1}</p>
                         <p className="text-sm text-muted-foreground">{`${address.city}, ${address.pincode}`}</p>
                     </div>
