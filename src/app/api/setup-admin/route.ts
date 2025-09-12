@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { runFlow } from "@genkit-ai/next";
-import { generateInitialAdminUserFlow } from "@/ai/flows/generate-initial-admin-user";
+import { generateInitialAdminUserFlow } from "../../../ai/flows/generate-initial-admin-user";
 
 export async function GET(req: NextRequest) {
   try {
