@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateInitialAdminUser } from '@/ai/flows/generate-initial-admin-user';
+import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-user';
 
 export async function GET(req: NextRequest) {
   try {
-    const result = await generateInitialAdminUser({
+    const result = await generateInitialAdminUserFlow({
       prompt: 'Create an admin user with email mirtabish346@gmail.com and password Tabish@123',
     });
+
+    console.log('Final flow result:', result);  // ✅ Debug log
 
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
@@ -15,18 +17,12 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    const msg = error.message || 'Failed to create admin user.';
+    console.error('Error running admin setup flow:', error);
 
-    if (msg.includes('EMAIL_EXISTS') || msg.includes('auth/email-already-exists')) {
-      return NextResponse.json(
-        { message: 'Admin user already exists.' },
-        { status: 200 }
-      );
-    }
-
+    let errorMessage = error.message || 'Failed to create admin user.';
     return NextResponse.json(
-      { error: 'Failed to create admin user.', details: msg },
+      { error: 'Failed to create admin user.', details: errorMessage },
       { status: 500 }
     );
   }
-}
+};
