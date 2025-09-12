@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,8 +33,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
-const formSchema = z.object({
+const baseFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   email: z.string().email({
     message: "Please enter a valid email.",
@@ -43,14 +46,50 @@ const formSchema = z.object({
   }),
 });
 
+const providerDetailsSchema = z.object({
+    partnerType: z.enum(["restaurant", "pharmacy", "rider", "grocery"], { required_error: "Please select a partner type."}),
+    // Restaurant
+    restaurantName: z.string().optional(),
+    gstNumber: z.string().optional(),
+    // Pharmacy
+    pharmacyName: z.string().optional(),
+    medicalLicense: z.string().optional(),
+    // Rider
+    vehicleType: z.string().optional(),
+    licenseNumber: z.string().optional(),
+    // Grocery
+    shopName: z.string().optional(),
+    // Common
+    phoneNumber: z.string().min(1, "Phone number is required"),
+    address: z.string().min(1, "Address is required"),
+}).refine(data => {
+    if (data.partnerType === 'restaurant') {
+        return !!data.restaurantName && !!data.gstNumber;
+    }
+    if (data.partnerType === 'pharmacy') {
+        return !!data.pharmacyName && !!data.medicalLicense;
+    }
+    if (data.partnerType === 'rider') {
+        return !!data.vehicleType && !!data.licenseNumber;
+    }
+    if (data.partnerType === 'grocery') {
+        return !!data.shopName && !!data.gstNumber;
+    }
+    return false;
+}, {
+    message: "Please fill all required fields for the selected partner type.",
+    path: ['partnerType'],
+});
+
+
 export function SignupForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPendingMessage, setShowPendingMessage] = useState(false);
+  const [step, setStep] = useState<"initial" | "providerDetails" | "pendingMessage">("initial");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof baseFormSchema>>({
+    resolver: zodResolver(baseFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -59,12 +98,21 @@ export function SignupForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const providerForm = useForm<z.infer<typeof providerDetailsSchema>>({
+    resolver: zodResolver(providerDetailsSchema),
+    defaultValues: {
+        partnerType: undefined,
+        phoneNumber: "",
+        address: "",
+    }
+  });
+
+  function onInitialSubmit(values: z.infer<typeof baseFormSchema>) {
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call to create user
     setTimeout(() => {
       if (values.role === "provider") {
-        setShowPendingMessage(true);
+        setStep("providerDetails");
       } else {
         toast({
           title: "Account Created!",
@@ -76,7 +124,17 @@ export function SignupForm() {
     }, 1000);
   }
 
-  if (showPendingMessage) {
+  function onProviderDetailsSubmit(values: z.infer<typeof providerDetailsSchema>) {
+    setIsLoading(true);
+    // Simulate API call to save provider details
+    setTimeout(() => {
+        console.log("Provider Details:", values);
+        setStep("pendingMessage");
+        setIsLoading(false);
+    }, 1000);
+  }
+
+  if (step === "pendingMessage") {
     return (
       <Card>
         <CardHeader>
@@ -97,9 +155,86 @@ export function SignupForm() {
     );
   }
 
+  if (step === "providerDetails") {
+    const partnerType = providerForm.watch("partnerType");
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Service Provider Details</CardTitle>
+                <CardDescription>Please provide some additional information about your business.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...providerForm}>
+                    <form onSubmit={providerForm.handleSubmit(onProviderDetailsSubmit)} className="grid gap-4">
+                        <FormField
+                            control={providerForm.control}
+                            name="partnerType"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Partner Type</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select your business type" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="restaurant">Restaurant Owner</SelectItem>
+                                            <SelectItem value="pharmacy">Pharmacy Owner</SelectItem>
+                                            <SelectItem value="rider">Rider</SelectItem>
+                                            <SelectItem value="grocery">Grocery Shop Owner</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {partnerType && (
+                            <>
+                                {partnerType === "restaurant" && (
+                                    <>
+                                        <FormField control={providerForm.control} name="restaurantName" render={({ field }) => (<FormItem><FormLabel>Restaurant Name</FormLabel><FormControl><Input placeholder="e.g. Milano's Pizzeria" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={providerForm.control} name="gstNumber" render={({ field }) => (<FormItem><FormLabel>GST Number</FormLabel><FormControl><Input placeholder="e.g. 22AAAAA0000A1Z5" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    </>
+                                )}
+                                {partnerType === "pharmacy" && (
+                                    <>
+                                        <FormField control={providerForm.control} name="pharmacyName" render={({ field }) => (<FormItem><FormLabel>Pharmacy Name</FormLabel><FormControl><Input placeholder="e.g. Quick Meds" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={providerForm.control} name="medicalLicense" render={({ field }) => (<FormItem><FormLabel>Medical License Number</FormLabel><FormControl><Input placeholder="e.g. 12345/ABC" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    </>
+                                )}
+                                {partnerType === "rider" && (
+                                    <>
+                                        <FormField control={providerForm.control} name="vehicleType" render={({ field }) => (<FormItem><FormLabel>Type of Vehicle</FormLabel><FormControl><Input placeholder="e.g. Scooter, Motorcycle" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={providerForm.control} name="licenseNumber" render={({ field }) => (<FormItem><FormLabel>Driver's License Number</FormLabel><FormControl><Input placeholder="e.g. DL-1420110012345" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    </>
+                                )}
+                                 {partnerType === "grocery" && (
+                                    <>
+                                        <FormField control={providerForm.control} name="shopName" render={({ field }) => (<FormItem><FormLabel>Name of Shop</FormLabel><FormControl><Input placeholder="e.g. Fresh Mart" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={providerForm.control} name="gstNumber" render={({ field }) => (<FormItem><FormLabel>GST Number</FormLabel><FormControl><Input placeholder="e.g. 22AAAAA0000A1Z5" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    </>
+                                )}
+                                <FormField control={providerForm.control} name="phoneNumber" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" placeholder="e.g. 9876543210" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField control={providerForm.control} name="address" render={({ field }) => (<FormItem><FormLabel>Address</FormLabel><FormControl><Textarea placeholder="Full business or personal address" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                            </>
+                        )}
+                        <Button type="submit" className="w-full" disabled={isLoading || !partnerType}>
+                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                             Submit Application
+                        </Button>
+                         <Button variant="link" size="sm" onClick={() => setStep("initial")} className="text-muted-foreground">Back</Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    );
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form onSubmit={form.handleSubmit(onInitialSubmit)} className="grid gap-4">
         <FormField
           control={form.control}
           name="name"
@@ -168,3 +303,5 @@ export function SignupForm() {
     </Form>
   );
 }
+
+    
