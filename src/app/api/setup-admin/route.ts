@@ -11,14 +11,7 @@ export async function GET(req: NextRequest) {
       user,
     });
   } catch (error: any) {
-    console.error('Error in admin setup:', error.message);
-
-    if (
-      error.message.includes('already exists') ||
-      error.message.includes('auth/email-already-exists')
-    ) {
-      return NextResponse.json({ message: 'Admin user already exists.' }, { status: 200 });
-    }
+    console.error('Error creating admin user:', error.message);
 
     return NextResponse.json(
       { error: 'Failed to create admin user.', details: error.message },
