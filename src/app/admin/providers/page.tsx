@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Card,
     CardContent,
@@ -16,8 +18,32 @@ import {
   import { Badge } from "@/components/ui/badge";
   import { Button } from "@/components/ui/button";
   import { adminProviders } from "@/lib/data";
+  import { useToast } from "@/hooks/use-toast";
   
   export default function AdminProvidersPage() {
+    const { toast } = useToast();
+
+    const handleApprove = (providerName: string) => {
+        toast({
+            title: "Provider Approved",
+            description: `An email has been sent to ${providerName} notifying them of their approval.`,
+        });
+    }
+
+    const handleReject = (providerName: string) => {
+        toast({
+            title: "Provider Rejected",
+            description: `An email has been sent to ${providerName} notifying them of their rejection.`,
+            variant: "destructive",
+        });
+    }
+
+    const sortedProviders = [...adminProviders].sort((a, b) => {
+        if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+        if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+        return 0;
+    });
+
     return (
       <Card>
         <CardHeader>
@@ -38,7 +64,7 @@ import {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {adminProviders.map((provider) => (
+              {sortedProviders.map((provider) => (
                 <TableRow key={provider.id}>
                   <TableCell className="font-medium">{provider.id}</TableCell>
                   <TableCell>{provider.name}</TableCell>
@@ -61,8 +87,8 @@ import {
                   <TableCell>
                     {provider.status === "Pending" ? (
                       <div className="flex gap-2">
-                        <Button size="sm">Approve</Button>
-                        <Button variant="destructive" size="sm">
+                        <Button size="sm" onClick={() => handleApprove(provider.name)}>Approve</Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleReject(provider.name)}>
                           Reject
                         </Button>
                       </div>
