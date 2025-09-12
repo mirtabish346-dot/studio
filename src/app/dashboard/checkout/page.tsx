@@ -87,7 +87,7 @@ export default function CheckoutPage() {
           <CardContent className="grid gap-4">
             <RadioGroup
               defaultValue="card"
-              className="grid grid-cols-2 gap-4"
+              className="grid grid-cols-3 gap-4"
               onValueChange={setPaymentMethod}
             >
               <div>
@@ -112,6 +112,15 @@ export default function CheckoutPage() {
                   Cash on Delivery
                 </Label>
               </div>
+              <div>
+                <RadioGroupItem value="upi" id="upi" className="peer sr-only" />
+                <Label
+                  htmlFor="upi"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                >
+                  UPI
+                </Label>
+              </div>
             </RadioGroup>
             {paymentMethod === "card" && (
               <div className="grid gap-4 mt-4">
@@ -129,6 +138,12 @@ export default function CheckoutPage() {
                     <Input id="cvc" placeholder="123" />
                   </div>
                 </div>
+              </div>
+            )}
+             {paymentMethod === "upi" && (
+              <div className="grid gap-2 mt-4">
+                <Label htmlFor="upi-id">UPI ID</Label>
+                <Input id="upi-id" placeholder="yourname@bank" />
               </div>
             )}
           </CardContent>
