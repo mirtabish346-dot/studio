@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
+import { useFavorites } from "@/context/favorites-context";
+import { Button } from "../ui/button";
 
 interface Restaurant {
   id: string;
@@ -17,20 +19,38 @@ interface RestaurantCardProps {
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const { isRestaurantFavorite, addRestaurantToFavorites, removeRestaurantFromFavorites } = useFavorites();
+  const isFavorite = isRestaurantFavorite(restaurant.id);
+  
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if(isFavorite) {
+      removeRestaurantFromFavorites(restaurant.id);
+    } else {
+      addRestaurantToFavorites(restaurant);
+    }
+  }
+
   return (
-    <Link href={`/dashboard/food-delivery/${restaurant.id}`}>
-      <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300">
-        <CardHeader className="p-0">
-          <div className="relative h-48 w-full">
-            <Image
-              src={restaurant.image}
-              alt={restaurant.name}
-              fill
-              className="object-cover"
-              data-ai-hint={restaurant.imageHint}
-            />
-          </div>
-        </CardHeader>
+    <Card className="overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+       <CardHeader className="p-0 relative">
+        <Link href={`/dashboard/food-delivery/${restaurant.id}`}>
+            <div className="relative h-48 w-full">
+              <Image
+                src={restaurant.image}
+                alt={restaurant.name}
+                fill
+                className="object-cover"
+                data-ai-hint={restaurant.imageHint}
+              />
+            </div>
+        </Link>
+        <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-background/70 hover:bg-background h-8 w-8" onClick={handleFavoriteClick}>
+            <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+        </Button>
+      </CardHeader>
+      <Link href={`/dashboard/food-delivery/${restaurant.id}`}>
         <CardContent className="p-4">
           <CardTitle className="text-lg font-headline mb-1">{restaurant.name}</CardTitle>
           <div className="flex justify-between items-center text-sm text-muted-foreground">
@@ -41,7 +61,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             </div>
           </div>
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 }

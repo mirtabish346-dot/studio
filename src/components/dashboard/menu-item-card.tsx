@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart, type MenuItem } from "@/context/cart-context";
-import { PlusCircle, MinusCircle, Plus, Minus } from "lucide-react";
+import { useFavorites } from "@/context/favorites-context";
+import { PlusCircle, MinusCircle, Plus, Minus, Heart } from "lucide-react";
 import Image from "next/image";
 
 interface MenuItemCardProps {
@@ -12,7 +13,19 @@ interface MenuItemCardProps {
 
 export function MenuItemCard({ item }: MenuItemCardProps) {
   const { addToCart, removeFromCart, getQuantity } = useCart();
+  const { isMenuItemFavorite, addMenuItemToFavorites, removeMenuItemFromFavorites } = useFavorites();
   const quantity = getQuantity(item.id);
+  const isFavorite = isMenuItemFavorite(item.id);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFavorite) {
+      removeMenuItemFromFavorites(item.id);
+    } else {
+      addMenuItemToFavorites(item);
+    }
+  };
 
   return (
     <Card className="flex flex-col">
@@ -29,7 +42,12 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
           />
         </div>
         <div className="flex flex-col flex-1">
-          <h3 className="font-semibold">{item.name}</h3>
+          <div className="flex justify-between items-start">
+            <h3 className="font-semibold">{item.name}</h3>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleFavoriteClick}>
+              <Heart className={cn("h-5 w-5", isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground")} />
+            </Button>
+          </div>
           <p className="text-sm text-muted-foreground flex-1">
             {item.description}
           </p>
@@ -65,4 +83,8 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
       </CardContent>
     </Card>
   );
+}
+
+function cn(arg0: string, arg1: string): string | undefined {
+  return [arg0, arg1].filter(Boolean).join(' ');
 }

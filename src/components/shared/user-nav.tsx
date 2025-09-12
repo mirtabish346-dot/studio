@@ -51,6 +51,9 @@ export function UserNav() {
             <Link href="/dashboard/orders">My Orders</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href="/dashboard/favorites">My Favorites</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="#">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
