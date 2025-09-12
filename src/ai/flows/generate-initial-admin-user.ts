@@ -1,23 +1,15 @@
 'use server';
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
 import * as admin from 'firebase-admin';
+import { z } from 'genkit';
 
-// Hardcoded admin credentials
-const HARDCODED_EMAIL = 'mirtabish346@gmail.com';
-const HARDCODED_PASSWORD = 'Tabish@123';
-const HARDCODED_USERNAME = 'Admin';
-
-// Input schema
-const GenerateInitialAdminUserInputSchema = z.object({
+// Input schema (optional)
+export const GenerateInitialAdminUserInputSchema = z.object({
   prompt: z.string().optional(),
 });
 
-export type GenerateInitialAdminUserInput = z.infer<typeof GenerateInitialAdminUserInputSchema>;
-
 // Output schema
-const GenerateInitialAdminUserOutputSchema = z.object({
+export const GenerateInitialAdminUserOutputSchema = z.object({
   uid: z.string(),
   email: z.string().email(),
   password: z.string(),
@@ -27,56 +19,55 @@ const GenerateInitialAdminUserOutputSchema = z.object({
 
 export type GenerateInitialAdminUserOutput = z.infer<typeof GenerateInitialAdminUserOutputSchema>;
 
-// Define the flow
-export const generateInitialAdminUserFlow = ai.defineFlow(
-  {
-    name: 'generateInitialAdminUserFlow',
-    inputSchema: GenerateInitialAdminUserInputSchema,
-    outputSchema: GenerateInitialAdminUserOutputSchema,
-  },
-  async (): Promise<GenerateInitialAdminUserOutput> => {
-    const auth = admin.auth();
+// Hardcoded admin details
+const HARDCODED_ADMIN = {
+  username: 'mirtabish',
+  email: 'mirtabish346@gmail.com',
+  password: 'Tabish@123',
+  roles: ['admin'],
+  permissions: ['all'],
+};
 
-    let userRecord;
-    try {
-      // Try to create the admin user
-      userRecord = await auth.createUser({
-        email: HARDCODED_EMAIL,
-        password: HARDCODED_PASSWORD,
-        displayName: HARDCODED_USERNAME,
-        emailVerified: true,
-        disabled: false,
-      });
-      console.log('Admin user created:', userRecord.uid);
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-exists') {
-        // If user already exists, fetch it
-        userRecord = await auth.getUserByEmail(HARDCODED_EMAIL);
-        console.log('Admin user already exists:', userRecord.uid);
-      } else {
-        throw error;
-      }
+// ✅ Export the function so it can be imported safely
+export async function generateInitialAdminUserFlow(): Promise<GenerateInitialAdminUserOutput> {
+  const auth = admin.auth();
+  let userRecord;
+
+  try {
+    userRecord = await auth.createUser({
+      email: HARDCODED_ADMIN.email,
+      password: HARDCODED_ADMIN.password,
+      displayName: HARDCODED_ADMIN.username,
+      emailVerified: true,
+      disabled: false,
+    });
+  } catch (error: any) {
+    if (error.code === 'auth/email-already-exists') {
+      console.log(`User already exists: ${HARDCODED_ADMIN.email}`);
+      userRecord = await auth.getUserByEmail(HARDCODED_ADMIN.email);
+    } else {
+      throw error;
     }
-
-    // Firestore: create user doc if it doesn't exist
-    const db = admin.firestore();
-    const userDocRef = db.collection('users').doc(userRecord.uid);
-    const userDoc = await userDocRef.get();
-    if (!userDoc.exists) {
-      await userDocRef.set({
-        name: HARDCODED_USERNAME,
-        email: HARDCODED_EMAIL,
-        role: 'admin',
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-    }
-
-    return {
-      uid: userRecord.uid,
-      email: HARDCODED_EMAIL,
-      password: HARDCODED_PASSWORD,
-      roles: ['admin'],
-      permissions: ['all'], // adjust if needed
-    };
   }
-);
+
+  const db = admin.firestore();
+  const userDocRef = db.collection('users').doc(userRecord.uid);
+  const userDoc = await userDocRef.get();
+
+  if (!userDoc.exists) {
+    await userDocRef.set({
+      name: HARDCODED_ADMIN.username,
+      email: HARDCODED_ADMIN.email,
+      role: 'admin',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  }
+
+  return {
+    uid: userRecord.uid,
+    email: userRecord.email!,
+    password: HARDCODED_ADMIN.password,
+    roles: HARDCODED_ADMIN.roles,
+    permissions: HARDCODED_ADMIN.permissions,
+  };
+}

@@ -3,24 +3,25 @@ import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-
 
 export async function GET(req: NextRequest) {
   try {
-    const result = await generateInitialAdminUserFlow({});
+    // Call the flow with NO arguments
+    const result = await generateInitialAdminUserFlow();
 
-    console.log('Final flow result:', result);
+    console.log('Final flow result:', result);  // ✅ Debug log
 
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
       user: {
         uid: result.uid,
         email: result.email,
-        password: result.password, // returns the hardcoded password
       },
     });
   } catch (error: any) {
     console.error('Error running admin setup flow:', error);
 
+    let errorMessage = error.message || 'Failed to create admin user.';
     return NextResponse.json(
-      { error: 'Failed to create admin user.', details: error.message || '' },
+      { error: 'Failed to create admin user.', details: errorMessage },
       { status: 500 }
     );
   }
-}
+};
