@@ -9,13 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import placeholderImages from "@/lib/placeholder-images.json";
 
 export default function CheckoutPage() {
   const { cartItems, getCartTotal, clearCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
-  const checkoutImage = placeholderImages.placeholderImages.find(p => p.id === "checkout-hero");
 
   const total = getCartTotal();
   const tax = total * 0.08;
@@ -36,7 +34,7 @@ export default function CheckoutPage() {
       <div className="text-center">
         <h1 className="text-2xl font-bold">Your cart is empty.</h1>
         <p className="text-muted-foreground">Add some items to proceed to checkout.</p>
-        <Button onClick={() => router.push("/dashboard/food-delivery")} className="mt-4">
+        <Button onClick={() => router.push("/dashboard")} className="mt-4">
           Browse Restaurants
         </Button>
       </div>
