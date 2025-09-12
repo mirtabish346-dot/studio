@@ -30,7 +30,7 @@ export default function FoodDeliveryPage() {
         <div className="flex items-center gap-4">
           <Button variant="outline" className="shrink-0">
             <MapPin className="h-5 w-5" />
-            <span className="hidden md:inline ml-2">Anytown, USA</span>
+            <span className="hidden md:inline ml-2">Srinagar, Jammu and Kashmir</span>
           </Button>
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
