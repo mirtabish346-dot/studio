@@ -15,7 +15,7 @@ export default function CheckoutPage() {
   const { cartItems, getCartTotal, clearCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
-  const checkoutImage = placeholderImages.find(p => p.id === "checkout-hero");
+  const checkoutImage = placeholderImages.placeholderImages.find(p => p.id === "checkout-hero");
 
   const total = getCartTotal();
   const tax = total * 0.08;

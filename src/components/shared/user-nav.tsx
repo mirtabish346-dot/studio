@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 
 export function UserNav() {
   const router = useRouter();
-  const avatarImage = placeholderImages.find((p) => p.id === "user-avatar");
+  const avatarImage = placeholderImages.placeholderImages.find((p) => p.id === "user-avatar");
 
   return (
     <DropdownMenu>
