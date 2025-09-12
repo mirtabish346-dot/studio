@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,7 +55,7 @@ export function UserNav() {
             <Link href="/dashboard/favorites">My Favorites</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="#">Settings</Link>
+            <Link href="/dashboard/settings">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
