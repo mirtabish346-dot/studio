@@ -1,4 +1,6 @@
-import { userOrders } from "@/lib/data";
+"use client";
+
+import { userOrders, menus } from "@/lib/data";
 import {
   Card,
   CardContent,
@@ -18,8 +20,45 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Repeat } from "lucide-react";
+import { useCart } from "@/context/cart-context";
+import { useToast } from "@/hooks/use-toast";
 
 export default function OrdersPage() {
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+  const allMenuItems = Object.values(menus).flatMap((menu) => menu.items);
+
+  const handleReorder = (orderId: string) => {
+    const order = userOrders.find((o) => o.id === orderId);
+    if (!order || !order.items) return;
+
+    let itemsAddedCount = 0;
+    order.items.forEach(orderItem => {
+      const menuItem = allMenuItems.find(item => item.id === orderItem.itemId);
+      if (menuItem) {
+        for(let i = 0; i < orderItem.quantity; i++) {
+          addToCart(menuItem);
+        }
+        itemsAddedCount += orderItem.quantity;
+      }
+    });
+
+    if (itemsAddedCount > 0) {
+      toast({
+        title: "Items Added to Cart",
+        description: `${itemsAddedCount} item(s) from order ${orderId} have been added to your cart with current pricing.`,
+      });
+    } else {
+       toast({
+        title: "Reorder Failed",
+        description: `Could not find items from order ${orderId} in the current menu.`,
+        variant: "destructive"
+      });
+    }
+
+  };
+
+
   return (
     <Card>
       <CardHeader>
@@ -65,7 +104,7 @@ export default function OrdersPage() {
                     </Link>
                   </Button>
                   {order.status === "Delivered" && (
-                     <Button variant="outline" size="sm">
+                     <Button variant="outline" size="sm" onClick={() => handleReorder(order.id)}>
                         <Repeat className="mr-2 h-4 w-4" />
                         Reorder
                     </Button>

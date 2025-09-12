@@ -164,15 +164,23 @@ export const userOrders = [
     id: "ORDER-001",
     restaurantName: "Milano's Pizzeria",
     date: "2024-05-20",
-    total: 32.97,
+    total: 28.98,
     status: "Delivered",
+    items: [
+      { itemId: "m1-1", quantity: 1 },
+      { itemId: "m1-2", quantity: 1 },
+    ]
   },
   {
     id: "ORDER-002",
     restaurantName: "Taco Fiesta",
     date: "2024-05-21",
-    total: 19.98,
+    total: 17.98,
     status: "Delivered",
+    items: [
+      { itemId: "m3-1", quantity: 1 },
+      { itemId: "m3-2", quantity: 1 },
+    ]
   },
   {
     id: "ORDER-003",
@@ -180,6 +188,10 @@ export const userOrders = [
     date: new Date().toLocaleDateString('en-CA'),
     total: 18.98,
     status: "Out for Delivery",
+    items: [
+        { itemId: "m5-1", quantity: 1 },
+        { itemId: "m5-2", quantity: 1 },
+    ]
   },
 ];
 
@@ -192,7 +204,11 @@ export const adminOrders = [
     total: 25.50,
     status: "Preparing",
     customer: "Jane Doe",
-    deliveryPartner: "Unassigned"
+    deliveryPartner: "Unassigned",
+    items: [
+        { itemId: "m4-1", quantity: 1 },
+        { itemId: "m4-2", quantity: 2 },
+    ]
   },
 ];
 
