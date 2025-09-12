@@ -35,6 +35,17 @@ const newUsers = [
   { month: "Jun", count: 239 },
 ];
 
+const chartConfig = {
+  revenue: {
+    label: "Revenue",
+    color: "hsl(var(--primary))",
+  },
+  count: {
+    label: "Users",
+    color: "hsl(var(--primary))",
+  }
+};
+
 
 export default function AdminDashboardPage() {
   return (
@@ -97,7 +108,7 @@ export default function AdminDashboardPage() {
             <CardTitle>Monthly Revenue</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-            <ResponsiveContainer width="100%" height={350}>
+            <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
               <BarChart data={monthlyRevenue}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -105,7 +116,7 @@ export default function AdminDashboardPage() {
                  <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
         <Card className="col-span-3">
@@ -113,7 +124,7 @@ export default function AdminDashboardPage() {
             <CardTitle>New Sign-ups</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={350}>
+             <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
               <LineChart data={newUsers}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -121,7 +132,7 @@ export default function AdminDashboardPage() {
                  <ChartTooltip content={<ChartTooltipContent />} />
                 <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" />
               </LineChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
