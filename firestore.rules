@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if a user is an Admin
+    function isAdmin() {
+      // Check if the user is authenticated before trying to access their data
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      
+      // CREATE:
+      // Any authenticated user can create their own user document.
+      // The role must be 'customer' or 'provider'.
+      // If the role is 'provider', the status must be 'pending'.
+      allow create: if request.auth != null && request.auth.uid == userId
+                      && ('role' in request.resource.data)
+                      && (request.resource.data.role == 'customer' || 
+                         (request.resource.data.role == 'provider' && request.resource.data.status == 'pending'));
+                         
+      // READ (Get a single document)
+      // Users can read their own document.
+      // Admins can read any user document.
+      allow get: if request.auth != null && (request.auth.uid == userId || isAdmin());
+
+      // LIST (Query a collection)
+      // Admins can list all user documents.
+      allow list: if isAdmin();
+
+      // UPDATE:
+      // Users can update their own document.
+      // Admins can update any user document (e.g., to approve a provider).
+      allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
+
+      // DELETE:
+      // Users can delete their own document.
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // You would add rules for other collections here. For example:
+    // match /orders/{orderId} { ... }
+    // match /restaurants/{restaurantId} { ... }
+  }
+}
