@@ -106,3 +106,4 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     };
   }
 );
+export { generateInitialAdminUserFlow };
