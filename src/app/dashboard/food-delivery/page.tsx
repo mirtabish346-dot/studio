@@ -15,18 +15,24 @@ export default function FoodDeliveryPage() {
           Choose from a wide variety of cuisines.
         </p>
       </div>
-      <div className="flex items-center gap-4">
-        <Button variant="outline" className="shrink-0">
-          <MapPin className="h-5 w-5" />
-          <span className="hidden md:inline ml-2">Anytown, USA</span>
-        </Button>
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search restaurants or food..."
-            className="pl-10"
-          />
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+            <Button variant="outline" className="shrink-0">
+            <MapPin className="h-5 w-5" />
+            <span className="hidden md:inline ml-2">Anytown, USA</span>
+            </Button>
+            <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+                type="search"
+                placeholder="Search restaurants or food..."
+                className="pl-10"
+            />
+            </div>
+        </div>
+        <div className="flex items-center gap-2">
+            <Button variant="outline">Best Prices</Button>
+            <Button variant="outline">Food of the day</Button>
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
