@@ -23,12 +23,6 @@ export function Header() {
         >
           Dashboard
         </Link>
-        <Link
-          href="/dashboard/orders"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Orders
-        </Link>
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -48,12 +42,6 @@ export function Header() {
             </Link>
             <Link href="/dashboard" className="hover:text-foreground">
               Dashboard
-            </Link>
-            <Link
-              href="/dashboard/orders"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Orders
             </Link>
           </nav>
         </SheetContent>
