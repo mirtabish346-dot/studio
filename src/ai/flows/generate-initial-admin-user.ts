@@ -50,14 +50,25 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     outputSchema: GenerateInitialAdminUserOutputSchema,
   },
   async (input: GenerateInitialAdminUserInput): Promise<GenerateInitialAdminUserOutput> => {
-    const { output: generatedUser } = await prompt(input);
+    console.log('Input prompt:', input.prompt);
 
-    if (!generatedUser) {
-      throw new Error('Failed to generate user details.');
+    // Generate user from AI
+    const { output: generatedUser } = await prompt(input);
+    console.log('Generated user from Genkit:', generatedUser);
+
+    if (!generatedUser || !generatedUser.email) {
+      throw new Error('Failed to generate user details or email is missing.');
+    }
+
+    // Initialize Firebase Admin if not already initialized
+    if (!admin.apps.length) {
+      console.log('Initializing Firebase Admin...');
+      admin.initializeApp();
     }
 
     const auth = admin.auth();
     let userRecord;
+
     try {
       userRecord = await auth.createUser({
         email: generatedUser.email,
@@ -66,7 +77,9 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
         emailVerified: true,
         disabled: false,
       });
+      console.log('Firebase user created:', userRecord.uid, userRecord.email);
     } catch (error: any) {
+      console.error('Error creating Firebase user:', error.message, error.code);
       if (error.code === 'auth/email-already-exists') {
         console.log(`User already exists: ${generatedUser.email}`);
         userRecord = await auth.getUserByEmail(generatedUser.email);
@@ -86,15 +99,15 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
         role: 'admin',
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
+      console.log('Firestore document created for user:', userRecord.uid);
+    } else {
+      console.log('Firestore document already exists for user:', userRecord.uid);
     }
 
-    if (!userRecord.email) {
-      throw new Error('Firebase Auth user has no email.');
-    }
-
+    console.log('Returning final user object...');
     return {
-      uid: userRecord.uid,
-      email: userRecord.email,
+      uid: userRecord.uid || 'unknown-uid',
+      email: userRecord.email || 'unknown-email',
       password: generatedUser.password,
       roles: generatedUser.roles,
       permissions: generatedUser.permissions,
