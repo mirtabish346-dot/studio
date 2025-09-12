@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview AI agent for generating and creating the first admin user.
+ * AI agent for generating and creating the first admin user.
  */
 
 import { ai } from '@/ai/genkit';
@@ -13,15 +13,13 @@ if (!admin.apps.length) {
   admin.initializeApp();
 }
 
-// Input schema for flow
+// Input schema
 const GenerateInitialAdminUserInputSchema = z.object({
-  prompt: z.string().describe(
-    'Prompt describing the admin user to create, e.g. "Create an admin user with email admin@omniserve.com and password Admin@123"'
-  ),
+  prompt: z.string(),
 });
 export type GenerateInitialAdminUserInput = z.infer<typeof GenerateInitialAdminUserInputSchema>;
 
-// Output schema for flow
+// Output schema
 const GenerateInitialAdminUserOutputSchema = z.object({
   uid: z.string(),
   email: z.string().email(),
@@ -32,7 +30,7 @@ const GenerateInitialAdminUserOutputSchema = z.object({
 });
 export type GenerateInitialAdminUserOutput = z.infer<typeof GenerateInitialAdminUserOutputSchema>;
 
-// Define the prompt
+// AI prompt
 const prompt = ai.definePrompt({
   name: 'generateInitialAdminUserPrompt',
   input: { schema: GenerateInitialAdminUserInputSchema },
@@ -50,7 +48,7 @@ Prompt: {{{prompt}}}
 Return username, email, password, roles (include 'admin'), permissions in JSON format.`,
 });
 
-// Define the flow
+// Flow
 export const generateInitialAdminUserFlow = ai.defineFlow(
   {
     name: 'generateInitialAdminUserFlow',
@@ -58,14 +56,14 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     outputSchema: GenerateInitialAdminUserOutputSchema,
   },
   async input => {
-    // Step 1: Generate user details using the AI prompt
+    // Step 1: Generate user details
     const { output: generatedUser } = await prompt(input);
 
     if (!generatedUser) {
       throw new Error('Failed to generate user details.');
     }
 
-    // Step 2: Create the user in Firebase Auth
+    // Step 2: Create user in Firebase Auth
     const auth = admin.auth();
     let userRecord;
     try {
@@ -78,14 +76,14 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
       });
     } catch (error: any) {
       if (error.code === 'auth/email-already-exists') {
-        console.log(`User with email ${generatedUser.email} already exists. Fetching...`);
+        console.log(`User with email ${generatedUser.email} exists. Fetching...`);
         userRecord = await auth.getUserByEmail(generatedUser.email);
       } else {
         throw error;
       }
     }
 
-    // Step 3: Add user document in Firestore if not exists
+    // Step 3: Create user document in Firestore if not exists
     const db = admin.firestore();
     const userDocRef = db.collection('users').doc(userRecord.uid);
     const userDoc = await userDocRef.get();
