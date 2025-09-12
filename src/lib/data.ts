@@ -1,4 +1,5 @@
 import placeholderImages from "./placeholder-images.json";
+import type { MenuItem } from "@/context/cart-context";
 
 export const restaurants = [
   {
@@ -57,7 +58,15 @@ export const restaurants = [
   },
 ];
 
-export const menus = {
+type MenuData = {
+    [key: string]: {
+        restaurantId: string;
+        name: string;
+        items: MenuItem[];
+    }
+}
+
+export const menus: MenuData = {
   "1": {
     restaurantId: "1",
     name: "Milano's Pizzeria",
@@ -84,8 +93,8 @@ export const menus = {
     restaurantId: "2",
     name: "The Daily Grind",
     items: [
-      { id: "m2-1", name: "Avocado Toast", description: "Healthy and delicious.", price: 8.99, image: "" },
-      { id: "m2-2", name: "Latte", description: "Freshly brewed espresso with steamed milk.", price: 4.50, image: "" },
+      { id: "m2-1", name: "Avocado Toast", description: "Healthy and delicious.", price: 8.99, image: "", imageHint: "avocado toast" },
+      { id: "m2-2", name: "Latte", description: "Freshly brewed espresso with steamed milk.", price: 4.50, image: "", imageHint: "latte coffee" },
     ],
   },
   "3": {
@@ -100,7 +109,7 @@ export const menus = {
         image: placeholderImages.placeholderImages.find((p) => p.id === "menu-tacos")?.imageUrl || "",
         imageHint: "beef tacos",
       },
-      { id: "m3-2", name: "Chips and Guacamole", description: "Freshly made guacamole.", price: 6.99, image: "" },
+      { id: "m3-2", name: "Chips and Guacamole", description: "Freshly made guacamole.", price: 6.99, image: "", imageHint: "chips guacamole" },
     ],
   },
   "4": {
@@ -115,7 +124,7 @@ export const menus = {
         image: placeholderImages.placeholderImages.find((p) => p.id === "menu-sushi")?.imageUrl || "",
         imageHint: "sushi platter",
       },
-      { id: "m4-2", name: "Tuna Nigiri", description: "2 pieces of fresh tuna on rice.", price: 7.99, image: "" },
+      { id: "m4-2", name: "Tuna Nigiri", description: "2 pieces of fresh tuna on rice.", price: 7.99, image: "", imageHint: "tuna nigiri" },
     ],
   },
   "5": {
@@ -130,7 +139,7 @@ export const menus = {
         image: placeholderImages.placeholderImages.find((p) => p.id === "menu-burger")?.imageUrl || "",
         imageHint: "cheeseburger fries",
       },
-      { id: "m5-2", name: "Onion Rings", description: "Crispy fried onion rings.", price: 5.99, image: "" },
+      { id: "m5-2", name: "Onion Rings", description: "Crispy fried onion rings.", price: 5.99, image: "", imageHint: "onion rings" },
     ],
   },
   "6": {
@@ -145,7 +154,7 @@ export const menus = {
         image: placeholderImages.placeholderImages.find((p) => p.id === "menu-curry")?.imageUrl || "",
         imageHint: "chicken curry",
       },
-      { id: "m6-2", name: "Garlic Naan", description: "Soft bread with garlic and butter.", price: 3.99, image: "" },
+      { id: "m6-2", name: "Garlic Naan", description: "Soft bread with garlic and butter.", price: 3.99, image: "", imageHint: "garlic naan" },
     ],
   },
 };

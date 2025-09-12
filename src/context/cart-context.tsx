@@ -9,6 +9,7 @@ export interface MenuItem {
   description: string;
   price: number;
   image: string;
+  imageHint?: string;
 }
 
 export interface CartItem extends MenuItem {
@@ -22,6 +23,7 @@ interface CartContextType {
   clearCart: () => void;
   getCartTotal: () => number;
   getItemCount: () => number;
+  getQuantity: (itemId: string) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -40,10 +42,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prevItems, { ...item, quantity: 1 }];
     });
-    toast({
-      title: "Added to cart",
-      description: `${item.name} has been added to your cart.`,
-    });
+    if (cartItems.find(i => i.id === item.id) === undefined) {
+        toast({
+            title: "Added to cart",
+            description: `${item.name} has been added to your cart.`,
+        });
+    }
   };
 
   const removeFromCart = (itemId: string) => {
@@ -72,6 +76,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const getItemCount = () => {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
+  
+  const getQuantity = (itemId: string) => {
+    const item = cartItems.find((i) => i.id === itemId);
+    return item ? item.quantity : 0;
+  };
 
   return (
     <CartContext.Provider
@@ -82,6 +91,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         getCartTotal,
         getItemCount,
+        getQuantity,
       }}
     >
       {children}
