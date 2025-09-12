@@ -66,7 +66,7 @@ const prompt = ai.definePrompt({
   Please provide the output in a JSON format that adheres to the specified schema, and ensuring all fields are populated with appropriate and secure values. The roles should include 'admin'.`,
 });
 
-const generateInitialAdminUserFlow = ai.defineFlow(
+export const generateInitialAdminUserFlow = ai.defineFlow(
   {
     name: 'generateInitialAdminUserFlow',
     inputSchema: GenerateInitialAdminUserInputSchema,
@@ -106,4 +106,3 @@ const generateInitialAdminUserFlow = ai.defineFlow(
     };
   }
 );
-export { generateInitialAdminUserFlow };

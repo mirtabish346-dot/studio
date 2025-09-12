@@ -1,8 +1,9 @@
+
 // src/app/api/setup-admin/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 import { runFlow } from '@genkit-ai/next';
-import { generateInitialAdminUserFlow } from '../../../ai/flows/generate-initial-admin-user';
+import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-user';
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,12 +29,14 @@ export async function GET(req: NextRequest) {
     
     // Firebase errors for existing users might be nested or have specific codes
     if (errorMessage.includes("EMAIL_EXISTS")) {
+       console.log('Detected that admin user already exists.');
        return NextResponse.json(
           { error: "Admin user already exists." },
           { status: 409 }
         );
     }
 
+    console.error('An unexpected error occurred during admin setup:', errorMessage);
     return NextResponse.json(
       { error: 'Failed to create admin user.', details: errorMessage },
       { status: 500 }
