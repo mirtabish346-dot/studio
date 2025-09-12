@@ -9,11 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function CheckoutPage() {
   const { cartItems, getCartTotal, clearCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   const total = getCartTotal();
   const tax = total * 0.08;
@@ -34,7 +37,7 @@ export default function CheckoutPage() {
       <div className="text-center">
         <h1 className="text-2xl font-bold">Your cart is empty.</h1>
         <p className="text-muted-foreground">Add some items to proceed to checkout.</p>
-        <Button onClick={() => router.push("/dashboard")} className="mt-4">
+        <Button onClick={() => router.push("/dashboard/food-delivery")} className="mt-4">
           Browse Restaurants
         </Button>
       </div>
@@ -82,20 +85,52 @@ export default function CheckoutPage() {
             <CardTitle>Payment Method</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4">
-             <div className="grid gap-2">
-              <Label htmlFor="card-number">Card Number</Label>
-              <Input id="card-number" placeholder="**** **** **** 1234" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="expiry">Expiry</Label>
-                <Input id="expiry" placeholder="MM/YY" />
+            <RadioGroup
+              defaultValue="card"
+              className="grid grid-cols-2 gap-4"
+              onValueChange={setPaymentMethod}
+            >
+              <div>
+                <RadioGroupItem value="card" id="card" className="peer sr-only" />
+                <Label
+                  htmlFor="card"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                >
+                  Credit/Debit Card
+                </Label>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" />
+              <div>
+                <RadioGroupItem
+                  value="cash"
+                  id="cash"
+                  className="peer sr-only"
+                />
+                <Label
+                  htmlFor="cash"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                >
+                  Cash on Delivery
+                </Label>
               </div>
-            </div>
+            </RadioGroup>
+            {paymentMethod === "card" && (
+              <div className="grid gap-4 mt-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="card-number">Card Number</Label>
+                  <Input id="card-number" placeholder="**** **** **** 1234" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="expiry">Expiry</Label>
+                    <Input id="expiry" placeholder="MM/YY" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="cvc">CVC</Label>
+                    <Input id="cvc" placeholder="123" />
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
