@@ -13,26 +13,26 @@ export async function GET(req: NextRequest) {
       prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
     });
 
-    console.log('Admin user creation successful:', result);
+    console.log('Admin user creation flow completed successfully:', result);
 
     return NextResponse.json({
-      message: 'Admin user created successfully!',
+      message: 'Admin user setup flow completed successfully!',
       user: {
         uid: result.uid,
         email: result.email,
       },
     });
   } catch (error: any) {
-    console.error('Error creating admin user:', error);
+    console.error('Error running admin user setup flow:', error);
 
     let errorMessage = error.message || 'Failed to create admin user.';
     
     // Firebase errors for existing users might be nested or have specific codes
-    if (errorMessage.includes("EMAIL_EXISTS")) {
+    if (errorMessage.includes("EMAIL_EXISTS") || errorMessage.includes("auth/email-already-exists")) {
        console.log('Detected that admin user already exists.');
        return NextResponse.json(
-          { error: "Admin user already exists." },
-          { status: 409 }
+          { message: "Admin user already exists." },
+          { status: 200 } // Returning 200 to indicate the desired state is achieved.
         );
     }
 

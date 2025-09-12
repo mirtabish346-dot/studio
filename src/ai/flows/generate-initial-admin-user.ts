@@ -82,22 +82,38 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     
     // Step 2: Create the user in Firebase Authentication
     const auth = admin.auth();
-    const userRecord = await auth.createUser({
-      email: generatedUser.email,
-      password: generatedUser.password,
-      displayName: generatedUser.username,
-      emailVerified: true,
-      disabled: false,
-    });
+    let userRecord;
+    try {
+      userRecord = await auth.createUser({
+        email: generatedUser.email,
+        password: generatedUser.password,
+        displayName: generatedUser.username,
+        emailVerified: true,
+        disabled: false,
+      });
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-exists') {
+        console.log(`User with email ${generatedUser.email} already exists. Fetching user...`);
+        userRecord = await auth.getUserByEmail(generatedUser.email);
+      } else {
+        throw error;
+      }
+    }
+
 
     // Step 3: Create the user document in Firestore with the 'admin' role
     const db = admin.firestore();
-    await db.collection('users').doc(userRecord.uid).set({
-      name: generatedUser.username,
-      email: generatedUser.email,
-      role: 'admin',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    const userDocRef = db.collection('users').doc(userRecord.uid);
+    const userDoc = await userDocRef.get();
+    
+    if (!userDoc.exists) {
+      await userDocRef.set({
+        name: generatedUser.username,
+        email: generatedUser.email,
+        role: 'admin',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
     
     // Step 4: Return the final output
     return {
