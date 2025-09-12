@@ -1,3 +1,6 @@
+
+"use client";
+
 import { DollarSign, Users, Package, ShoppingCart } from "lucide-react";
 
 import {
