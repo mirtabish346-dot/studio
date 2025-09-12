@@ -33,7 +33,7 @@ export default function CheckoutPage() {
   const grandTotal = total + tax + deliveryFee - discount;
 
   const handleApplyCoupon = () => {
-    if (couponCode.toUpperCase() === "OWAISDONKEY") {
+    if (couponCode === "OWAISDONKEY") {
       const newDiscount = total * 0.1;
       setDiscount(newDiscount);
       toast({
