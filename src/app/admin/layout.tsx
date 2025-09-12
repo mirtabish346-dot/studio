@@ -30,7 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Icons } from "@/components/icons";
-import { UserNav } from "@/components/shared/user-nav";
+import { AdminUserNav } from "@/components/admin/admin-user-nav";
 
 export default function AdminLayout({
   children,
@@ -143,7 +143,7 @@ export default function AdminLayout({
           <div className="w-full flex-1">
             {/* Can add a search bar here if needed */}
           </div>
-          <UserNav />
+          <AdminUserNav />
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           {children}
