@@ -4,19 +4,54 @@ import { useFavorites } from "@/context/favorites-context";
 import { RestaurantCard } from "@/components/dashboard/restaurant-card";
 import { MenuItemCard } from "@/components/dashboard/menu-item-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function FavoritesPage() {
-  const { favoriteRestaurants, favoriteMenuItems } = useFavorites();
+  const { favoriteRestaurants, favoriteMenuItems, clearAllFavorites } = useFavorites();
+  const hasFavorites = favoriteRestaurants.length > 0 || favoriteMenuItems.length > 0;
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">
-          My Favorites
-        </h1>
-        <p className="text-muted-foreground">
-          Your favorite restaurants and food items all in one place.
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">
+            My Favorites
+          </h1>
+          <p className="text-muted-foreground">
+            Your favorite restaurants and food items all in one place.
+          </p>
+        </div>
+        {hasFavorites && (
+           <AlertDialog>
+           <AlertDialogTrigger asChild>
+             <Button variant="destructive">Clear All</Button>
+           </AlertDialogTrigger>
+           <AlertDialogContent>
+             <AlertDialogHeader>
+               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+               <AlertDialogDescription>
+                 This action cannot be undone. This will permanently remove all
+                 your favorite restaurants and items.
+               </AlertDialogDescription>
+             </AlertDialogHeader>
+             <AlertDialogFooter>
+               <AlertDialogCancel>Cancel</AlertDialogCancel>
+               <AlertDialogAction onClick={clearAllFavorites}>Continue</AlertDialogAction>
+             </AlertDialogFooter>
+           </AlertDialogContent>
+         </AlertDialog>
+        )}
       </div>
 
       <Tabs defaultValue="restaurants" className="w-full">

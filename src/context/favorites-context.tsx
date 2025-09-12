@@ -22,6 +22,7 @@ interface FavoritesContextType {
   addMenuItemToFavorites: (item: MenuItem) => void;
   removeMenuItemFromFavorites: (itemId: string) => void;
   isMenuItemFavorite: (itemId: string) => boolean;
+  clearAllFavorites: () => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
@@ -77,8 +78,11 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeRestaurantFromFavorites = (restaurantId: string) => {
+    const restaurant = favoriteRestaurants.find(r => r.id === restaurantId);
     setFavoriteRestaurants((prev) => prev.filter((r) => r.id !== restaurantId));
-    toast({ title: "Removed from favorites." });
+    if (restaurant) {
+      toast({ title: `${restaurant.name} removed from favorites.` });
+    }
   };
 
   const isRestaurantFavorite = (restaurantId: string) => {
@@ -91,12 +95,21 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeMenuItemFromFavorites = (itemId: string) => {
+    const item = favoriteMenuItems.find(i => i.id === itemId);
     setFavoriteMenuItems((prev) => prev.filter((i) => i.id !== itemId));
-     toast({ title: "Removed from favorites." });
+    if (item) {
+     toast({ title: `${item.name} removed from favorites.` });
+    }
   };
 
   const isMenuItemFavorite = (itemId: string) => {
     return favoriteMenuItems.some((i) => i.id === itemId);
+  };
+
+  const clearAllFavorites = () => {
+    setFavoriteRestaurants([]);
+    setFavoriteMenuItems([]);
+    toast({ title: "All favorites have been cleared." });
   };
 
   return (
@@ -110,6 +123,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
         addMenuItemToFavorites,
         removeMenuItemFromFavorites,
         isMenuItemFavorite,
+        clearAllFavorites,
       }}
     >
       {children}
