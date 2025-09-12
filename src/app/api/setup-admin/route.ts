@@ -4,12 +4,12 @@ import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-
 
 export async function GET(req: NextRequest) {
   try {
-    // Call the flow directly
+    // Directly call the flow — no runFlow()
     const result = await generateInitialAdminUserFlow({
       prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
     });
 
-    // Return the actual Firebase UID and email
+    // Return actual Firebase UID and email
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
       user: {

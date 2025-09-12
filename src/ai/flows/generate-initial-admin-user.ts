@@ -96,7 +96,7 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
       });
     }
 
-    // Step 4: Return the final output
+    // Step 4: Return final output (real Firebase UID/email)
     return {
       uid: userRecord.uid,
       email: userRecord.email!,
@@ -107,4 +107,3 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     };
   }
 );
-
