@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function CheckoutPage() {
   const { cartItems, getCartTotal, clearCart } = useCart();
@@ -65,6 +66,10 @@ export default function CheckoutPage() {
                 <Label htmlFor="pincode">Pincode</Label>
                 <Input id="pincode" defaultValue="12345" />
               </div>
+            </div>
+             <div className="grid gap-2">
+              <Label htmlFor="directions">Additional Directions</Label>
+              <Textarea id="directions" placeholder="e.g. Leave at front door" />
             </div>
           </CardContent>
         </Card>
