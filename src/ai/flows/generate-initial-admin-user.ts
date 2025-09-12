@@ -96,7 +96,7 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
       });
     }
 
-    // Step 4: Return final output (real Firebase UID/email)
+    // Step 4: Return final output
     return {
       uid: userRecord.uid,
       email: userRecord.email!,
@@ -107,3 +107,15 @@ export const generateInitialAdminUserFlow = ai.defineFlow(
     };
   }
 );
+
+// --- Plain function to return real Firebase UID/email ---
+export async function createInitialAdminUser(): Promise<{ uid: string; email: string }> {
+  const result = await generateInitialAdminUserFlow({
+    prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
+  });
+
+  return {
+    uid: result.uid,
+    email: result.email!,
+  };
+}

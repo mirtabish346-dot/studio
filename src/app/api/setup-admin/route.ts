@@ -1,21 +1,14 @@
 // src/app/api/setup-admin/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-user';
+import { createInitialAdminUser } from '@/ai/flows/generate-initial-admin-user';
 
 export async function GET(req: NextRequest) {
   try {
-    // Directly call the flow — no runFlow()
-    const result = await generateInitialAdminUserFlow({
-      prompt: 'Create an admin user with email admin@omniserve.com and password Admin@123',
-    });
+    const user = await createInitialAdminUser();
 
-    // Return actual Firebase UID and email
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
-      user: {
-        uid: result.uid,
-        email: result.email,
-      },
+      user,
     });
   } catch (error: any) {
     console.error('Error in admin setup:', error.message);
