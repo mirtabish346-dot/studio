@@ -220,9 +220,10 @@ export const adminUsers = [
 ];
 
 export const adminProviders = [
-    { id: 'PROV-001', name: "Dave's Deli", type: 'Food', status: 'Approved', joined: '2023-05-20' },
-    { id: 'PROV-002', name: 'Quick Meds', type: 'Medicine', status: 'Approved', joined: '2023-06-15' },
-    { id: 'PROV-003', name: "Sarah's Groceries", type: 'Grocery', status: 'Pending', joined: '2024-05-10' },
+    { id: 'PROV-001', name: 'Milano\'s Pizzeria', type: 'Restaurant', status: 'Approved', joined: '2023-05-20', details: 'GST: 22AAAAA0000A1Z5' },
+    { id: 'PROV-002', name: 'Quick Meds', type: 'Pharmacy', status: 'Approved', joined: '2023-06-15', details: 'License: 12345/ABC' },
+    { id: 'PROV-003', name: "Sarah's Groceries", type: 'Grocery', status: 'Pending', joined: '2024-05-10', details: 'GST: 22BBBBB0000B1Z5' },
+    { id: 'PROV-004', name: 'Speedy Singh', type: 'Rider', status: 'Pending', joined: '2024-05-22', details: 'Vehicle: Scooter, License: DL-1420110012345' },
 ];
 
 export const deliveryPartners = ["John Smith", "Maria Garcia", "Chen Wei", "Fatima Al-Sayed"];

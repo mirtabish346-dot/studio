@@ -21,16 +21,17 @@ import {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Manage Restaurants</CardTitle>
-          <CardDescription>Approve or deny new restaurant partners.</CardDescription>
+          <CardTitle>Manage Providers</CardTitle>
+          <CardDescription>Approve or deny new service partner applications.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Restaurant ID</TableHead>
+                <TableHead>Provider ID</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Cuisine</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Details</TableHead>
                 <TableHead>Joined</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -42,6 +43,7 @@ import {
                   <TableCell className="font-medium">{provider.id}</TableCell>
                   <TableCell>{provider.name}</TableCell>
                   <TableCell>{provider.type}</TableCell>
+                  <TableCell className="text-xs">{provider.details}</TableCell>
                   <TableCell>{provider.joined}</TableCell>
                   <TableCell>
                     <Badge
