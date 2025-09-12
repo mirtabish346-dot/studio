@@ -2,60 +2,52 @@
 
 import * as admin from 'firebase-admin';
 
-// Initialize Firebase Admin (if not already initialized)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(), // or your genkit cert setup if needed
-  });
-}
-
-export async function generateInitialAdminUserFlow() {
-  const auth = admin.auth();
+export const generateInitialAdminUserFlow = async () => {
   const email = 'mirtabish346@gmail.com';
   const password = 'Tabish@123';
-  const displayName = 'Mir Tabish';
 
+  const auth = admin.auth();
   let userRecord;
 
   try {
+    // Try to create user
     userRecord = await auth.createUser({
       email,
       password,
-      displayName,
+      displayName: 'Tabish Admin',
       emailVerified: true,
       disabled: false,
     });
-    console.log('Admin user created:', email);
+    console.log('Admin user created:', userRecord.uid);
   } catch (error: any) {
     if (error.code === 'auth/email-already-exists') {
-      console.log(`Admin user already exists: ${email}`);
+      // If already exists, fetch existing user
       userRecord = await auth.getUserByEmail(email);
+      console.log('Admin user already exists:', userRecord.uid);
     } else {
-      console.error('Error creating admin user:', error);
       throw error;
     }
   }
 
-  // Ensure Firestore document exists
+  // Add Firestore record if not exists
   const db = admin.firestore();
   const userDocRef = db.collection('users').doc(userRecord.uid);
   const userDoc = await userDocRef.get();
 
   if (!userDoc.exists) {
     await userDocRef.set({
-      name: displayName,
+      name: 'Tabish Admin',
       email: email,
       role: 'admin',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
 
-  // Return the real Firebase UID and email
   return {
     uid: userRecord.uid,
     email: userRecord.email,
-    password,
+    password: password,
     roles: ['admin'],
     permissions: ['all'],
   };
-}
+};
