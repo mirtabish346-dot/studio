@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
@@ -26,18 +27,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { userProfile } from "@/lib/data";
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [deleteConfirmationEmail, setDeleteConfirmationEmail] = useState("");
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
 
   const handleDeleteAccount = () => {
+    if (deleteConfirmationEmail !== userProfile.email) {
+      toast({
+        title: "Incorrect Email",
+        description: "The email you entered does not match your account's email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Account Deleted",
       description: "Your account has been successfully deleted.",
       variant: "destructive",
     });
+    setDeleteConfirmationEmail("");
+    setIsDeleteAlertOpen(false);
     router.push("/");
   };
 
@@ -91,7 +106,7 @@ export default function SettingsPage() {
           </p>
         </CardContent>
         <CardFooter className="border-t px-6 py-4">
-          <AlertDialog>
+          <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">Delete Account</Button>
             </AlertDialogTrigger>
@@ -99,13 +114,24 @@ export default function SettingsPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
+                  This action cannot be undone. To confirm, please type your
+                  email address (<span className="font-medium text-foreground">{userProfile.email}</span>) below.
                 </AlertDialogDescription>
               </AlertDialogHeader>
+              <div className="py-2">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={deleteConfirmationEmail}
+                  onChange={(e) => setDeleteConfirmationEmail(e.target.value)}
+                />
+              </div>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteAccount}>
+                <AlertDialogCancel onClick={() => setDeleteConfirmationEmail('')}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmationEmail !== userProfile.email}
+                >
                   Yes, delete my account
                 </AlertDialogAction>
               </AlertDialogFooter>
