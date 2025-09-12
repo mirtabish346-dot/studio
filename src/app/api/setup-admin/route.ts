@@ -1,13 +1,13 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { runFlow } from "@genkit-ai/next";
-import { generateInitialAdminUser } from "@/ai/flows/generate-initial-admin-user";
+import { generateInitialAdminUserFlow } from "@/ai/flows/generate-initial-admin-user";
 
 export async function GET(req: NextRequest) {
   try {
     console.log("Attempting to create initial admin user via runFlow...");
 
-    const result = await runFlow(generateInitialAdminUser, {
+    const result = await runFlow(generateInitialAdminUserFlow, {
       prompt:
         "Create an admin user with email admin@omniserve.com and password Admin@123",
     });
