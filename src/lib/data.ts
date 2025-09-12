@@ -226,3 +226,13 @@ export const adminProviders = [
 ];
 
 export const deliveryPartners = ["John Smith", "Maria Garcia", "Chen Wei", "Fatima Al-Sayed"];
+
+export const userProfile = {
+    name: 'Customer',
+    email: 'customer@omniserve.com',
+    phone: '123-456-7890',
+    addresses: [
+      { id: 'addr1', type: 'Home', line1: '123 Main St', city: 'Anytown', pincode: '12345', isDefault: true },
+      { id: 'addr2', type: 'Work', line1: '456 Business Ave', city: 'Anytown', pincode: '12345', isDefault: false },
+    ]
+};
