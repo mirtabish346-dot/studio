@@ -15,18 +15,25 @@ import { useCart } from "@/context/cart-context";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function CartSheet() {
   const { cartItems, removeFromCart, getCartTotal, clearCart, getItemCount } =
     useCart();
   const itemCount = getItemCount();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
-          {itemCount > 0 && (
+          {isClient && itemCount > 0 && (
             <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
               {itemCount}
             </span>
