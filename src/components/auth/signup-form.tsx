@@ -102,6 +102,13 @@ export function SignupForm() {
     resolver: zodResolver(providerDetailsSchema),
     defaultValues: {
         partnerType: undefined,
+        restaurantName: "",
+        gstNumber: "",
+        pharmacyName: "",
+        medicalLicense: "",
+        vehicleType: "",
+        licenseNumber: "",
+        shopName: "",
         phoneNumber: "",
         address: "",
     }
@@ -303,5 +310,3 @@ export function SignupForm() {
     </Form>
   );
 }
-
-    
