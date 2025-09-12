@@ -20,7 +20,7 @@ import {
   import { Button } from "@/components/ui/button";
   import { useToast } from "@/hooks/use-toast";
   import { db } from "@/lib/firebase";
-  import { collection, getDocs, doc, updateDoc, setDoc } from "firebase/firestore";
+  import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
   import { Loader2 } from "lucide-react";
 
   interface User {
@@ -30,6 +30,7 @@ import {
       role: string;
       registered: string;
       status?: string;
+      partnerType?: string;
       [key: string]: any; // Allow other properties
   }
 
@@ -146,9 +147,9 @@ import {
     const getRoleDisplay = (user: User) => {
       if (user.role === 'provider') {
         if (user.status === 'pending') {
-          return `Application (${providerRolesDisplay[user.partnerType] || user.partnerType})`;
+          return `Application (${providerRolesDisplay[user.partnerType || ''] || user.partnerType})`;
         }
-        return providerRolesDisplay[user.partnerType] || user.partnerType;
+        return providerRolesDisplay[user.partnerType || ''] || user.partnerType;
       }
       return user.role.charAt(0).toUpperCase() + user.role.slice(1);
     }

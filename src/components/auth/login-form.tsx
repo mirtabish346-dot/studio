@@ -16,7 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,6 +33,7 @@ export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,31 +43,60 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      if (values.email === "admin@omniserve.com") {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const role = userData.role;
+        const status = userData.status;
+        
+        if (role === "provider" && status !== "approved") {
+           toast({
+            title: "Login Failed",
+            description: "Your provider account has not been approved yet.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
+
         toast({
           title: "Login Successful",
-          description: "Redirecting to admin dashboard...",
+          description: "Welcome back!",
         });
-        router.push("/admin");
-      } else if (values.email === "delivery@omniserve.com") {
-        toast({
-          title: "Login Successful",
-          description: "Redirecting to delivery dashboard...",
-        });
-        router.push("/delivery");
+
+        if (role === "admin") {
+          router.push("/admin");
+        } else if (userData.partnerType === 'rider') {
+           router.push("/delivery");
+        } else {
+          router.push("/dashboard");
+        }
+
       } else {
-        toast({
-          title: "Login Successful",
-          description: "Welcome back to OmniServe!",
+         toast({
+          title: "Login Failed",
+          description: "User data not found.",
+          variant: "destructive"
         });
-        router.push("/dashboard");
       }
-      setIsLoading(false);
-    }, 1000);
+
+    } catch (error: any) {
+       toast({
+          title: "Login Failed",
+          description: error.message || "Invalid credentials. Please try again.",
+          variant: "destructive"
+        });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
@@ -96,7 +130,18 @@ export function LoginForm() {
                 </a>
               </div>
               <FormControl>
-                <Input type="password" {...field} />
+                <div className="relative">
+                    <Input type={showPassword ? "text" : "password"} {...field} />
+                    <Button 
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground"
+                        onClick={() => setShowPassword(prev => !prev)}
+                    >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                    </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
