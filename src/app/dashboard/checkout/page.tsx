@@ -19,6 +19,8 @@ export default function CheckoutPage() {
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isClient, setIsClient] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     setIsClient(true);
@@ -28,7 +30,25 @@ export default function CheckoutPage() {
   const total = getCartTotal();
   const tax = total * 0.08;
   const deliveryFee = 5.0;
-  const grandTotal = total + tax + deliveryFee;
+  const grandTotal = total + tax + deliveryFee - discount;
+
+  const handleApplyCoupon = () => {
+    if (couponCode.toUpperCase() === "SAVE10") {
+      const newDiscount = total * 0.1;
+      setDiscount(newDiscount);
+      toast({
+        title: "Coupon Applied!",
+        description: `You saved $${newDiscount.toFixed(2)}.`,
+      });
+    } else {
+      setDiscount(0);
+      toast({
+        title: "Invalid Coupon",
+        description: "The coupon code you entered is not valid.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handlePlaceOrder = () => {
     toast({
@@ -180,6 +200,15 @@ export default function CheckoutPage() {
               </div>
             ))}
             <Separator />
+            <div className="flex items-center gap-2">
+              <Input 
+                placeholder="Coupon Code" 
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)} 
+              />
+              <Button onClick={handleApplyCoupon}>Apply</Button>
+            </div>
+            <Separator />
             <div className="flex justify-between">
               <p>Subtotal</p>
               <p>${total.toFixed(2)}</p>
@@ -192,6 +221,12 @@ export default function CheckoutPage() {
               <p>Delivery Fee</p>
               <p>${deliveryFee.toFixed(2)}</p>
             </div>
+            {discount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <p>Discount (SAVE10)</p>
+                <p>-${discount.toFixed(2)}</p>
+              </div>
+            )}
             <Separator />
             <div className="flex justify-between font-bold text-lg">
               <p>Total</p>
