@@ -4,7 +4,8 @@ import { UserNav } from "@/components/shared/user-nav";
 import { CartSheet } from "../dashboard/cart-sheet";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, MapPin, Search } from "lucide-react";
+import { Input } from "../ui/input";
 
 export function Header() {
   return (
@@ -47,6 +48,18 @@ export function Header() {
         </SheetContent>
       </Sheet>
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <Button variant="outline" className="shrink-0">
+          <MapPin className="h-5 w-5" />
+          <span className="hidden md:inline ml-2">Anytown, USA</span>
+        </Button>
+        <div className="relative w-full max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search services..."
+            className="pl-10"
+          />
+        </div>
         <CartSheet />
         <UserNav />
       </div>
