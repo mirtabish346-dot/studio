@@ -1,3 +1,94 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "login-hero",
+      "description": "A vibrant cityscape with delivery couriers on scooters",
+      "imageUrl": "https://picsum.photos/seed/login/1920/1080",
+      "imageHint": "delivery service"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/avatar/40/40",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "restaurant-1",
+      "description": "The exterior of a modern Italian restaurant",
+      "imageUrl": "https://picsum.photos/seed/r1/600/400",
+      "imageHint": "italian restaurant"
+    },
+    {
+      "id": "restaurant-2",
+      "description": "A cozy cafe with outdoor seating",
+      "imageUrl": "https://picsum.photos/seed/r2/600/400",
+      "imageHint": "cozy cafe"
+    },
+    {
+      "id": "restaurant-3",
+      "description": "A vibrant Mexican taqueria",
+      "imageUrl": "https://picsum.photos/seed/r3/600/400",
+      "imageHint": "mexican food"
+    },
+    {
+      "id": "restaurant-4",
+      "description": "A sleek sushi bar",
+      "imageUrl": "https://picsum.photos/seed/r4/600/400",
+      "imageHint": "sushi bar"
+    },
+    {
+      "id": "restaurant-5",
+      "description": "An American diner with neon lights",
+      "imageUrl": "https://picsum.photos/seed/r5/600/400",
+      "imageHint": "american diner"
+    },
+    {
+      "id": "restaurant-6",
+      "description": "An Indian restaurant with rich decor",
+      "imageUrl": "https://picsum.photos/seed/r6/600/400",
+      "imageHint": "indian food"
+    },
+    {
+      "id": "menu-pizza",
+      "description": "A classic Margherita pizza",
+      "imageUrl": "https://picsum.photos/seed/pizza/150/150",
+      "imageHint": "margherita pizza"
+    },
+    {
+      "id": "menu-pasta",
+      "description": "A plate of spaghetti carbonara",
+      "imageUrl": "https://picsum.photos/seed/pasta/150/150",
+      "imageHint": "spaghetti carbonara"
+    },
+    {
+      "id": "menu-burger",
+      "description": "A juicy cheeseburger with fries",
+      "imageUrl": "https://picsum.photos/seed/burger/150/150",
+      "imageHint": "cheeseburger fries"
+    },
+    {
+      "id": "menu-sushi",
+      "description": "A colorful platter of assorted sushi rolls",
+      "imageUrl": "https://picsum.photos/seed/sushi/150/150",
+      "imageHint": "sushi platter"
+    },
+    {
+      "id": "menu-tacos",
+      "description": "Three crispy beef tacos",
+      "imageUrl": "https://picsum.photos/seed/tacos/150/150",
+      "imageHint": "beef tacos"
+    },
+    {
+      "id": "menu-curry",
+      "description": "A bowl of chicken tikka masala",
+      "imageUrl": "https://picsum.photos/seed/curry/150/150",
+      "imageHint": "chicken curry"
+    },
+    {
+      "id": "checkout-hero",
+      "description": "A person happily receiving a delivery bag",
+      "imageUrl": "https://picsum.photos/seed/checkout/800/600",
+      "imageHint": "food delivery"
+    }
+  ]
 }
