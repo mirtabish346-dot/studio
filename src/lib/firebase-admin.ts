@@ -1,36 +1,46 @@
 import * as admin from 'firebase-admin';
 
-console.log('🔥 [FORCE LOG] firebase-admin file loaded');  // This should always appear first
+console.error('🔥 [FORCE LOG] firebase-admin.ts LOADED - This MUST appear in logs');  // Top-level log to confirm import
 
-// Env checks with structured JSON for easier parsing in Vercel
-console.log(JSON.stringify({
+// Env checks - Use error for high visibility in Vercel
+console.error(JSON.stringify({
   level: 'info',
   message: 'Env check - Project ID',
-  value: process.env.FIREBASE_PROJECT_ID ? 'Set' : 'MISSING'
+  value: process.env.FIREBASE_PROJECT_ID ? 'Set (' + process.env.FIREBASE_PROJECT_ID + ')' : 'MISSING'
 }));
-console.log(JSON.stringify({
+console.error(JSON.stringify({
   level: 'info',
   message: 'Env check - Client Email',
-  value: process.env.FIREBASE_CLIENT_EMAIL ? 'Set' : 'MISSING'
+  value: process.env.FIREBASE_CLIENT_EMAIL ? 'Set (' + process.env.FIREBASE_CLIENT_EMAIL.substring(0, 20) + '...)' : 'MISSING'
 }));
-console.log(JSON.stringify({
+const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+console.error(JSON.stringify({
   level: 'info',
-  message: 'Env check - Private Key preview',
-  value: (process.env.FIREBASE_PRIVATE_KEY || '').substring(0, 50) + '...'
+  message: 'Env check - Private Key',
+  value: privateKey ? `Length: ${privateKey.length}, Starts: "${privateKey.substring(0, 30)}..."` : 'MISSING'
 }));
 
 if (!admin.apps.length) {
   try {
+    const processedKey = privateKey?.replace(/\\n/g, '\n').trim();
+    if (!processedKey || !processedKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      throw new Error('Private key malformed - missing PEM header');
+    }
     const credential = admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: processedKey,
     });
     admin.initializeApp({ credential });
-    console.log(JSON.stringify({ level: 'info', message: 'Firebase Admin SDK initialized successfully' }));
+    console.error(JSON.stringify({ level: 'info', message: 'Firebase Admin SDK initialized successfully' }));
+
+    // Test credential: Try listing 1 user (fails if creds bad, but catches to log)
+    admin.auth().listUsers(1).catch((testErr: any) => {
+      console.error(JSON.stringify({ level: 'error', message: 'Credential test failed', details: testErr.message, code: testErr.code }));
+    });
   } catch (initError: any) {
-    console.error(JSON.stringify({ level: 'error', message: 'Firebase init failed', details: initError.message }));
-    // Don't throw here—let it fail later to see userRecord behavior
+    console.error(JSON.stringify({ level: 'error', message: 'CRITICAL: Firebase init FAILED', details: initError.message, stack: initError.stack }));
+    throw initError;  // Throw to bubble up - now shows in response/logs
   }
 }
 

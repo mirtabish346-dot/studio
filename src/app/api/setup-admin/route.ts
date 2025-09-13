@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import '@/lib/firebase-admin';  // Force init + logs
+import '@/lib/firebase-admin';  // Force init early
 import { generateInitialAdminUserFlow } from '@/ai/flows/generate-initial-admin-user';
+import { admin } from '@/lib/firebase-admin';  // Double-import to trigger logs
 
 export async function GET(req: NextRequest) {
   try {
+    // Quick test: Log admin apps length to confirm init
+    console.error('Admin apps length before flow:', admin.apps.length);
+
     const result = await generateInitialAdminUserFlow();
 
-    console.error('Admin user creation flow completed successfully:', JSON.stringify(result));  // Use error for visibility
+    console.error('Admin user creation flow completed successfully:', JSON.stringify(result));
 
     return NextResponse.json({
       message: 'Admin user setup flow completed successfully!',
@@ -14,7 +18,7 @@ export async function GET(req: NextRequest) {
         uid: result.uid,
         email: result.email,
       },
-      // fullResult: result,  // Optional: Remove in production
+      // fullResult: result,  // Comment out for prod
     });
   } catch (error: any) {
     console.error('Error running admin setup flow:', JSON.stringify({ 
