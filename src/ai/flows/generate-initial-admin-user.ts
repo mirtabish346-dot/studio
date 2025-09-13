@@ -1,16 +1,19 @@
 'use server';
 
-import { admin } from '@/lib/firebase-admin';  // Assuming you added this file as per previous advice
+import { admin } from '@/lib/firebase-admin';  // Ensures init
 
 export const generateInitialAdminUserFlow = async () => {
-  const email = 'mirtabish346@gmail.com';
-  const password = 'Tabish@123';
+  console.log(JSON.stringify({ level: 'info', message: 'Flow started', email: 'mirtabish346@gmail.com' }));
 
   const auth = admin.auth();
-  let userRecord;
+  console.log(JSON.stringify({ level: 'info', message: 'Auth instance type', type: auth.constructor.name }));  // Should be 'Auth'
+
+  const email = 'mirtabish346@gmail.com';
+  const password = 'Tabish@123';
+  let userRecord: any = null;  // Explicit type for logging
 
   try {
-    console.log('Attempting to create user with email:', email);  // Debug: Confirm attempt
+    console.log(JSON.stringify({ level: 'info', message: 'Attempting to create user' }));
     userRecord = await auth.createUser({
       email,
       password,
@@ -18,16 +21,16 @@ export const generateInitialAdminUserFlow = async () => {
       emailVerified: true,
       disabled: false,
     });
-    console.log('Admin user created successfully. userRecord:', userRecord);  // Debug: Full object
+    console.log(JSON.stringify({ level: 'info', message: 'Create successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
   } catch (error: any) {
-    console.error('Create user error:', error.code, error.message);  // Debug: Full error details
+    console.error(JSON.stringify({ level: 'error', message: 'Create user error', code: error.code, details: error.message }));
     if (error.code === 'auth/email-already-exists') {
-      console.log('Email exists, fetching existing user...');
+      console.log(JSON.stringify({ level: 'info', message: 'Email exists, fetching...' }));
       try {
         userRecord = await auth.getUserByEmail(email);
-        console.log('Fetched existing user. userRecord:', userRecord);  // Debug: Full object
+        console.log(JSON.stringify({ level: 'info', message: 'Fetch successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
       } catch (fetchError: any) {
-        console.error('Fetch user error:', fetchError.code, fetchError.message);  // Debug: If fetch fails
+        console.error(JSON.stringify({ level: 'error', message: 'Fetch user error', code: fetchError.code, details: fetchError.message }));
         throw new Error(`Failed to fetch existing user: ${fetchError.message}`);
       }
     } else {
@@ -35,33 +38,42 @@ export const generateInitialAdminUserFlow = async () => {
     }
   }
 
-  // Safety check: Ensure userRecord is valid before proceeding
+  // Hard fail if still no userRecord—don't proceed to Firestore
   if (!userRecord || !userRecord.uid) {
-    throw new Error('userRecord is invalid or missing UID after creation/fetch');
+    console.error(JSON.stringify({ level: 'error', message: 'CRITICAL: userRecord invalid', userRecord: userRecord }));
+    throw new Error('userRecord is undefined/null/missing UID after creation/fetch. Check Firebase init/permissions.');
   }
 
-  // Add Firestore record if not exists
-  const db = admin.firestore();
-  const userDocRef = db.collection('users').doc(userRecord.uid);
-  const userDoc = await userDocRef.get();
+  // Firestore part with logs
+  try {
+    const db = admin.firestore();
+    const userDocRef = db.collection('users').doc(userRecord.uid);
+    const userDoc = await userDocRef.get();
 
-  if (!userDoc.exists) {
-    await userDocRef.set({
-      name: 'Tabish Admin',
-      email: email,
-      role: 'admin',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-    console.log('Firestore user doc created for UID:', userRecord.uid);
-  } else {
-    console.log('Firestore user doc already exists for UID:', userRecord.uid);
+    if (!userDoc.exists) {
+      await userDocRef.set({
+        name: 'Tabish Admin',
+        email: email,
+        role: 'admin',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log(JSON.stringify({ level: 'info', message: 'Firestore doc created', uid: userRecord.uid }));
+    } else {
+      console.log(JSON.stringify({ level: 'info', message: 'Firestore doc exists', uid: userRecord.uid }));
+    }
+  } catch (fsError: any) {
+    console.error(JSON.stringify({ level: 'error', message: 'Firestore error', details: fsError.message }));
+    // Don't throw—return partial success for now
   }
 
-  return {
+  const result = {
     uid: userRecord.uid,
     email: userRecord.email,
     password: password,
     roles: ['admin'],
     permissions: ['all'],
   };
+  console.log(JSON.stringify({ level: 'info', message: 'Final flow result', result }));
+
+  return result;
 };
