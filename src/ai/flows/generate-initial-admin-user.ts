@@ -3,17 +3,17 @@
 import { admin } from '@/lib/firebase-admin';  // Ensures init
 
 export const generateInitialAdminUserFlow = async () => {
-  console.log(JSON.stringify({ level: 'info', message: 'Flow started', email: 'mirtabish346@gmail.com' }));
+  console.error(JSON.stringify({ level: 'info', message: 'Flow started', email: 'mirtabish346@gmail.com' }));
 
   const auth = admin.auth();
-  console.log(JSON.stringify({ level: 'info', message: 'Auth instance type', type: auth.constructor.name }));  // Should be 'Auth'
+  console.error(JSON.stringify({ level: 'info', message: 'Auth instance type', type: auth.constructor.name }));  // Should be 'Auth'
 
   const email = 'mirtabish346@gmail.com';
   const password = 'Tabish@123';
-  let userRecord: any = null;  // Explicit type for logging
+  let userRecord: any = null;
 
   try {
-    console.log(JSON.stringify({ level: 'info', message: 'Attempting to create user' }));
+    console.error(JSON.stringify({ level: 'info', message: 'Attempting to create user' }));
     userRecord = await auth.createUser({
       email,
       password,
@@ -21,16 +21,16 @@ export const generateInitialAdminUserFlow = async () => {
       emailVerified: true,
       disabled: false,
     });
-    console.log(JSON.stringify({ level: 'info', message: 'Create successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
+    console.error(JSON.stringify({ level: 'info', message: 'Create successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
   } catch (error: any) {
-    console.error(JSON.stringify({ level: 'error', message: 'Create user error', code: error.code, details: error.message }));
+    console.error(JSON.stringify({ level: 'error', message: 'Create user error', code: error.code, details: error.message, stack: error.stack }));
     if (error.code === 'auth/email-already-exists') {
-      console.log(JSON.stringify({ level: 'info', message: 'Email exists, fetching...' }));
+      console.error(JSON.stringify({ level: 'info', message: 'Email exists, fetching...' }));
       try {
         userRecord = await auth.getUserByEmail(email);
-        console.log(JSON.stringify({ level: 'info', message: 'Fetch successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
+        console.error(JSON.stringify({ level: 'info', message: 'Fetch successful', userRecordSummary: userRecord ? { uid: userRecord.uid, email: userRecord.email } : 'NULL' }));
       } catch (fetchError: any) {
-        console.error(JSON.stringify({ level: 'error', message: 'Fetch user error', code: fetchError.code, details: fetchError.message }));
+        console.error(JSON.stringify({ level: 'error', message: 'Fetch user error', code: fetchError.code, details: fetchError.message, stack: fetchError.stack }));
         throw new Error(`Failed to fetch existing user: ${fetchError.message}`);
       }
     } else {
@@ -38,13 +38,13 @@ export const generateInitialAdminUserFlow = async () => {
     }
   }
 
-  // Hard fail if still no userRecord—don't proceed to Firestore
+  // Hard fail if still no userRecord
   if (!userRecord || !userRecord.uid) {
     console.error(JSON.stringify({ level: 'error', message: 'CRITICAL: userRecord invalid', userRecord: userRecord }));
-    throw new Error('userRecord is undefined/null/missing UID after creation/fetch. Check Firebase init/permissions.');
+    throw new Error('userRecord is undefined/null/missing UID after creation/fetch. Likely bad Firebase credentials/permissions.');
   }
 
-  // Firestore part with logs
+  // Firestore part
   try {
     const db = admin.firestore();
     const userDocRef = db.collection('users').doc(userRecord.uid);
@@ -57,23 +57,22 @@ export const generateInitialAdminUserFlow = async () => {
         role: 'admin',
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
-      console.log(JSON.stringify({ level: 'info', message: 'Firestore doc created', uid: userRecord.uid }));
+      console.error(JSON.stringify({ level: 'info', message: 'Firestore doc created', uid: userRecord.uid }));
     } else {
-      console.log(JSON.stringify({ level: 'info', message: 'Firestore doc exists', uid: userRecord.uid }));
+      console.error(JSON.stringify({ level: 'info', message: 'Firestore doc exists', uid: userRecord.uid }));
     }
   } catch (fsError: any) {
-    console.error(JSON.stringify({ level: 'error', message: 'Firestore error', details: fsError.message }));
-    // Don't throw—return partial success for now
+    console.error(JSON.stringify({ level: 'error', message: 'Firestore error', details: fsError.message, stack: fsError.stack }));
   }
 
   const result = {
     uid: userRecord.uid,
     email: userRecord.email,
-    password: password,
+    // password: password,  // Optional: Remove in production for security
     roles: ['admin'],
     permissions: ['all'],
   };
-  console.log(JSON.stringify({ level: 'info', message: 'Final flow result', result }));
+  console.error(JSON.stringify({ level: 'info', message: 'Final flow result', result }));
 
   return result;
 };
